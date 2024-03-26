@@ -1,0 +1,58 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>周易六十四卦抽签</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #gua-display {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>抽签</h1>
+
+    <button id="toggle-button">开始</button>
+    <div id="gua-display">
+        <!-- 卦象信息显示在这里 -->
+    </div>
+
+    <script>
+        var interval;
+        var isRunning = false;
+
+        function fetchGua() {
+            $.getJSON('/get_gua', function(data) {
+                // 更新页面上的卦象信息
+                $('#gua-display').html(
+                    '<img src="' + data.image + '" alt="卦象"><p>'
+                    + data.name + '</p>'
+                    + "<strong>邵雍解卦：</strong>"+ data.text + '</p>'
+                    + "<strong>时运：</strong>"+ data.fortune + '</p>'
+                    + "<strong>财运：</strong>"+ data.career + '</p>'
+                    + "<strong>家宅：</strong>"+ data.home + '</p>'
+                    + "<strong>身体：</strong>"+ data.body + '</p>');
+            });
+        }
+
+        $('#toggle-button').click(function() {
+            if (!isRunning) {
+                interval = setInterval(fetchGua, 10); // 每10毫秒更新一次，可以根据需要调整
+                $(this).text('停止');
+            } else {
+                clearInterval(interval);
+                $(this).text('开始');
+            }
+            isRunning = !isRunning;
+        });
+    </script>
+</body>
+</html>
